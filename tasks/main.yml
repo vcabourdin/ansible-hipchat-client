@@ -1,0 +1,9 @@
+---
+- name: Add hipchat repository into sources list.
+  apt_repository: repo='deb http://downloads.hipchat.com/linux/apt stable main' state=present
+
+- name: Add Hipchat Apt signing key from url
+  apt_key: url=https://www.hipchat.com/keys/hipchat-linux.key state=present
+
+- name: clear APT cache then install Hipchat package
+  apt: name=hipchat update_cache=yes
