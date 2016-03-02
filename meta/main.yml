@@ -18,7 +18,6 @@ galaxy_info:
   
   galaxy_tags:
     - hipchat
-    - hipchat-client
     - atlassian
 
   dependencies: []
