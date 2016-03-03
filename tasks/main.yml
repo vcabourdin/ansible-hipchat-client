@@ -1,9 +1,18 @@
 ---
-- name: Add hipchat repository into sources list.
-  apt_repository: repo='deb http://downloads.hipchat.com/linux/apt stable main' state=present
+- name: Check if chrome is installed
+  shell: dpkg -l | grep -E '^ii' | grep google-chrome-stable
+  register: chrome_installed
+  ignore_errors: yes
 
-- name: Add Hipchat Apt signing key from url
-  apt_key: url=https://www.hipchat.com/keys/hipchat-linux.key state=present
+- name: Install Chrome
+  include: install.yml
+  when: chrome_installed.rc != 0
 
-- name: clear APT cache then install Hipchat package
-  apt: name=hipchat update_cache=yes
+- name: Check arch is 64 bits
+  shell: uname -m
+  register: linux_arch
+  ignore_errors: yes
+
+- name: Fix source list file for x64 arch
+  lineinfile: "dest=/etc/apt/sources.list.d/google-chrome.list state=present regexp='^.*http://dl.google.com.*$' line='deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'"
+  when: linux_arch.rc == 0 and linux_arch.stdout == "x86_64"
